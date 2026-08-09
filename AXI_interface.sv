@@ -30,7 +30,7 @@ interface AXI_interface (
   logic [ 1:0] RRESP;
   logic RLAST, RVALID, RREADY;
 
-  modport TB(
+  modport TB_side(
       output ARESETn, AWADDR, AWLEN, AWSIZE, AWVALID, WDATA, WLAST, WVALID, BREADY, ARADDR, ARLEN, ARSIZE, ARVALID, RREADY,
       input ACLK, AWREADY, WREADY, BRESP, BVALID, ARREADY, RDATA, RRESP, RLAST, RVALID
   );
