@@ -12,7 +12,7 @@ package AXI_transaction_pkg;
     rand logic [           7:0] AWLEN;  // not in the waveform in the specs
     rand logic [           2:0] AWSIZE;  // not in the waveform in the specs
     logic                       AWVALID;
-    rand logic [DATA_WIDTH-1:0] WDATA;
+    rand logic [DATA_WIDTH-1:0] WDATA[]; // we made it a dynamic array to avoid writing the same word in each beat
     logic                       WVALID;
     logic                       WLAST;
     rand logic                  BREADY;
@@ -49,6 +49,8 @@ package AXI_transaction_pkg;
                                           // [ ((AWLEN + 1) * 4) this represents the number of bytes added to the address, no. of beats*no. of bytes in each beat]
       ARADDR + ((ARLEN + 1) * 4) <= 4096; // make sure not to exceed the last address in the memory
                                           // [ ((ARLEN + 1) * 4) this represents the number of bytes added to the address, no. of beats*no. of bytes in each beat]
+      
+      WDATA.size() == (AWLEN + 1); // the burst (no. of beats) must be equal to awlen +1
     }
     // ==================================================
 
