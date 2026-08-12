@@ -77,7 +77,6 @@ package AXI_env_pkg;
       // Generator is done, wait one extra cycle then stop
       @(posedge vif.ACLK);
       @(posedge vif.ACLK);
-      scb.report();
       $stop;
     endtask
 
