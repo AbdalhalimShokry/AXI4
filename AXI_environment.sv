@@ -1,10 +1,10 @@
-package AXI_env_pkg;
+import AXI_transaction_pkg::*;
+import AXI_generator_pkg::*;
+import AXI_driver_pkg::*;
+import AXI_monitor_pkg::*;
+import AXI_scoreboard_pkg::*;
 
-  import AXI_transaction_pkg::*;
-  import AXI_generator_pkg::*;
-  import AXI_driver_pkg::*;
-  import AXI_monitor_pkg::*;
-  import AXI_scoreboard_pkg::*;
+package AXI_env_pkg;
 
   class AXI_environment;
 

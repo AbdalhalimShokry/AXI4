@@ -1,4 +1,5 @@
 import AXI_env_pkg::*;
+
 module top;
 
   // CLock
@@ -45,6 +46,10 @@ module top;
       .RLAST (intrf.RLAST),
       .RREADY(intrf.RREADY)
   );
+
+
+  // Assertions Instansiation
+  AXI_assertions assertion (intrf);
 
 
   // Environment

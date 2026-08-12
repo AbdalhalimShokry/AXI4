@@ -1,6 +1,6 @@
-package AXI_driver_pkg;
+import AXI_transaction_pkg::*;
 
-  import AXI_transaction_pkg::*;
+package AXI_driver_pkg;
 
   class AXI_driver;
 
@@ -10,8 +10,8 @@ package AXI_driver_pkg;
 
 
     // ===== Mailboxes ==================================
-    mailbox #(AXI_transaction) gen2drv_mbx; 
-    mailbox #(int)             drv2gen_mbx; 
+    mailbox #(AXI_transaction)    gen2drv_mbx;
+    mailbox #(int)                drv2gen_mbx;
     // ==================================================
 
 
@@ -28,7 +28,7 @@ package AXI_driver_pkg;
       vif.RREADY  <= 1'b0;
 
       forever begin
-        
+
         gen2drv_mbx.get(txn);
 
         fork
@@ -42,7 +42,7 @@ package AXI_driver_pkg;
             vif.AWLEN   <= txn.AWLEN;
             vif.AWSIZE  <= txn.AWSIZE;
             vif.AWVALID <= 1'b1;
-            
+
             // Wait for handshake
             do begin
               @(negedge vif.ACLK);
@@ -51,10 +51,10 @@ package AXI_driver_pkg;
 
             // --- W Channel (Write Data Burst) ---
             for (int i = 0; i <= txn.AWLEN; i++) begin
-              vif.WDATA  <= txn.WDATA[i]; // Driving the same randomized word across the burst
+              vif.WDATA  <= txn.WDATA[i];  // Driving the same randomized word across the burst
               vif.WLAST  <= (i == txn.AWLEN) ? 1'b1 : 1'b0;
               vif.WVALID <= 1'b1;
-              
+
               do begin
                 @(negedge vif.ACLK);
               end while (vif.WREADY !== 1'b1);
@@ -80,14 +80,14 @@ package AXI_driver_pkg;
             vif.ARLEN   <= txn.ARLEN;
             vif.ARSIZE  <= txn.ARSIZE;
             vif.ARVALID <= 1'b1;
-            
+
             do begin
               @(negedge vif.ACLK);
             end while (vif.ARREADY !== 1'b1);
             vif.ARVALID <= 1'b0;
 
             // --- R Channel (Read Data Burst) ---
-            vif.RREADY <= 1'b1;
+            vif.RREADY  <= 1'b1;
             for (int i = 0; i <= txn.ARLEN; i++) begin
               do begin
                 @(negedge vif.ACLK);
