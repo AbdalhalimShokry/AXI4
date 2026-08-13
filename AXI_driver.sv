@@ -1,6 +1,6 @@
-import AXI_transaction_pkg::*;
-
 package AXI_driver_pkg;
+
+  import AXI_transaction_pkg::*;
 
   class AXI_driver;
 

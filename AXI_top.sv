@@ -1,6 +1,6 @@
-import AXI_env_pkg::*;
-
 module top;
+
+  import AXI_env_pkg::*;
 
   // CLock
   logic ACLK;
