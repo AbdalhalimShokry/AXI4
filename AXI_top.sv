@@ -1,4 +1,4 @@
-module top;
+module AXI_top;
 
   import AXI_env_pkg::*;
 

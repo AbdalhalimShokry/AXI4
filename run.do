@@ -1,11 +1,9 @@
-vlog axi4.v axi_memory.v AXI_interface.sv AXI_transaction.sv AXI_generator.sv AXI_driver.sv AXI_monitor.sv AXI_scoreboard.sv AXI_encironment.sv AXI_assertions.sv AXI_top.sv +cover -covercells
+vlog +cover -covercells -f files.txt
 
-vsim work.top -cover
+vsim -voptargs=+acc work.AXI_top
 
-coverage save -onexit cov.ucdb
-
-add wave *
-
+add wave -r /*
 run -all
 
-coverage report -details -output cov_report.txt
+coverage save AXI_coverage.ucdb
+coverage report -details -output AXI_coverage.txt

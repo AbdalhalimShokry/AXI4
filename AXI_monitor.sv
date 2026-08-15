@@ -21,106 +21,122 @@ package AXI_monitor_pkg;
 
       forever begin
 
-        // Wait for the next clock edge
-        @(posedge vif.ACLK);
-
         sampled = new();
 
-        // Reset
-        if (!vif.ARESETn) begin
-          continue;
-        end
+        // --------------------------------------------------
+        // Wait until at least one operation is requested
+        // --------------------------------------------------
+        @(posedge vif.ACLK);
+
+        if (!vif.ARESETn) continue;
+
+        do begin
+          @(posedge vif.ACLK);
+        end while (!(vif.AWVALID || vif.ARVALID));
 
         sampled.ARESETn = vif.ARESETn;
+
+        // --------------------------------------------------
+        // Record which operations belong to this transaction
+        // --------------------------------------------------
+        sampled.AWVALID = vif.AWVALID;
+        sampled.ARVALID = vif.ARVALID;
 
 
         fork
 
           // ==================================================
           // WRITE OPERATION
-          // AW -> W -> B
           // ==================================================
-          begin
+          if (sampled.AWVALID) begin
+            begin
 
-            // ---------------- Write Address ----------------
-            do begin
-              @(posedge vif.ACLK);
-            end while (!(vif.AWVALID && vif.AWREADY));
-
-            sampled.AWADDR = vif.AWADDR;
-            sampled.AWLEN  = vif.AWLEN;
-            sampled.AWSIZE = vif.AWSIZE;
-
-            // Allocate space for all write data beats
-            sampled.WDATA  = new[vif.AWLEN + 1];
-
-
-            // ---------------- Write Data -------------------
-            for (int i = 0; i <= vif.AWLEN; i++) begin
+              // ---------------- Write Address ----------------
               do begin
                 @(posedge vif.ACLK);
-              end while (!(vif.WVALID && vif.WREADY));
+              end while (!(vif.AWVALID && vif.AWREADY));
 
-              sampled.WDATA[i] = vif.WDATA;
+              sampled.AWADDR = vif.AWADDR;
+              sampled.AWLEN  = vif.AWLEN;
+              sampled.AWSIZE = vif.AWSIZE;
 
-              // Last write beat
-              if (vif.WLAST) begin
-                break;
+              // Allocate write data array
+              sampled.WDATA  = new[sampled.AWLEN + 1];
+
+              // ---------------- Write Data -------------------
+              for (int i = 0; i <= sampled.AWLEN; i++) begin
+
+                do begin
+                  @(posedge vif.ACLK);
+                end while (!(vif.WVALID && vif.WREADY));
+
+                sampled.WDATA[i] = vif.WDATA;
+
+                if (vif.WLAST) break;
+
               end
+
+              // ---------------- Write Response ---------------
+              do begin
+                @(posedge vif.ACLK);
+              end while (!(vif.BVALID && vif.BREADY));
+
+              sampled.BRESP = vif.BRESP;
+
             end
-
-
-            // ---------------- Write Response ---------------
-            do begin
-              @(posedge vif.ACLK);
-            end while (!(vif.BVALID && vif.BREADY));
-
-            sampled.BRESP = vif.BRESP;
           end
 
 
           // ==================================================
           // READ OPERATION
-          // AR -> R
           // ==================================================
-          begin
+          if (sampled.ARVALID) begin
+            begin
 
-            // ---------------- Read Address -----------------
-            do begin
-              @(posedge vif.ACLK);
-            end while (!(vif.ARVALID && vif.ARREADY));
-
-            sampled.ARADDR = vif.ARADDR;
-            sampled.ARLEN  = vif.ARLEN;
-            sampled.ARSIZE = vif.ARSIZE;
-
-            // Allocate space for all read data beats
-            sampled.RDATA  = new[vif.ARLEN + 1];
-
-
-            // ---------------- Read Data --------------------
-            for (int i = 0; i <= vif.ARLEN; i++) begin
+              // ---------------- Read Address -----------------
               do begin
                 @(posedge vif.ACLK);
-              end while (!(vif.RVALID && vif.RREADY));
+              end while (!(vif.ARVALID && vif.ARREADY));
 
-              sampled.RDATA[i] = vif.RDATA;
-              sampled.RRESP = vif.RRESP;
+              sampled.ARADDR = vif.ARADDR;
+              sampled.ARLEN  = vif.ARLEN;
+              sampled.ARSIZE = vif.ARSIZE;
 
-              // Last read beat
-              if (vif.RLAST) begin
-                sampled.RLAST = vif.RLAST;
-                break;
+              // Allocate read data array
+              sampled.RDATA  = new[sampled.ARLEN + 1];
+
+              // ---------------- Read Data --------------------
+              for (int i = 0; i <= sampled.ARLEN; i++) begin
+
+                do begin
+                  @(posedge vif.ACLK);
+                end while (!(vif.RVALID && vif.RREADY));
+
+                sampled.RDATA[i] = vif.RDATA;
+                sampled.RRESP[i] = vif.RRESP;
+
+                if (vif.RLAST) begin
+                  sampled.RLAST = vif.RLAST;
+                  break;
+                end
+
               end
+
             end
           end
+
         join
 
-        // Send the complete transaction to scoreboard
+
+        // --------------------------------------------------
+        // Send complete transaction to scoreboard
+        // --------------------------------------------------
         mon2scb_mbx.put(sampled);
 
       end
+
     endtask
 
   endclass
+
 endpackage

@@ -1,0 +1,11 @@
+axi4.v
+axi_memory.v
+AXI_interface.sv
+AXI_transaction.sv
+AXI_generator.sv
+AXI_driver.sv
+AXI_monitor.sv
+AXI_scoreboard.sv
+AXI_environment.sv
+AXI_assertions.sv
+AXI_top.sv

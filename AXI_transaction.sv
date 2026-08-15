@@ -138,7 +138,7 @@ package AXI_transaction_pkg;
     function void display_transaction(string tag = "DEFAULT");
       $display("=========================================================");
       $display("[%s] AXI Transaction:", tag);
-      $display("  Write Channel: AWADDR = 'h%0h, AWLEN = %0d, WDATA = 'h%0h", AWADDR, AWLEN, WDATA);
+      $display("  Write Channel: AWADDR = 'h%0h, AWLEN = %0d", AWADDR, AWLEN);
       $display("  Read Channel : ARADDR = 'h%0h, ARLEN = %0d", ARADDR, ARLEN);
       $display("=========================================================");
     endfunction

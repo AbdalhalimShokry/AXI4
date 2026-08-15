@@ -20,7 +20,7 @@ interface AXI_interface (
   logic BVALID, BREADY;
 
   // Preparing Reading
-  logic [31:0] ARADDR;
+  logic [15:0] ARADDR;
   logic [ 7:0] ARLEN;
   logic [ 2:0] ARSIZE;
   logic ARVALID, ARREADY;
