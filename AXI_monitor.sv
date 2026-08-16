@@ -113,7 +113,7 @@ package AXI_monitor_pkg;
                 end while (!(vif.RVALID && vif.RREADY));
 
                 sampled.RDATA[i] = vif.RDATA;
-                sampled.RRESP[i] = vif.RRESP;
+                sampled.RRESP = vif.RRESP;
 
                 if (vif.RLAST) begin
                   sampled.RLAST = vif.RLAST;

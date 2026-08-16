@@ -24,10 +24,10 @@ module axi4_memory #(
         if (!rst_n)
             mem_rdata <= 0;
         else if (mem_en) begin
-            if (!mem_we)
+            if (mem_we)
                 memory[mem_addr] <= mem_wdata;
-             else
-               mem_rdata <= memory[mem_addr-1];
+            else
+                mem_rdata <= memory[mem_addr];
         end
     end
     

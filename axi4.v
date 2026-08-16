@@ -14,7 +14,7 @@ module axi4 #(
     output reg                      AWREADY,
 
     // Write data channel
-    input  wire [DATA_WIDTH-1:0]    WDATA[],
+    input  wire [DATA_WIDTH-1:0]    WDATA,
     input  wire                     WVALID,
     input  wire                     WLAST,
     output reg                      WREADY,
@@ -32,7 +32,7 @@ module axi4 #(
     output reg                      ARREADY,
 
     // Read data channel
-    output reg [DATA_WIDTH-1:0]     RDATA[],
+    output reg [DATA_WIDTH-1:0]     RDATA,
     output reg [1:0]                RRESP,
     output reg                      RVALID,
     output reg                      RLAST,
