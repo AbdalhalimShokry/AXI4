@@ -73,7 +73,7 @@ package AXI_driver_pkg;
                   vif.WVALID <= 1'b0;
                   vif.WLAST  <= 1'b0;
                 end
-              join
+              join_none
 
               // 3. Write Response Channel
               @(negedge vif.ACLK);

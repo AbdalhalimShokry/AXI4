@@ -7,22 +7,22 @@ package AXI_scoreboard_pkg;
     // ==================================================
     // Reference Memory
     // ==================================================
-    logic [31:0] reference_memory[0:1023];
+    logic                      [31:0] reference_memory[0:1023];
 
     // ==================================================
     // Mailboxes
     // ==================================================
-    mailbox #(AXI_transaction) mon2scb_mbx;
-    mailbox #(int)             scb2mon_mbx;
+    mailbox #(AXI_transaction)        mon2scb_mbx;
+    mailbox #(int)                    scb2mon_mbx;
 
-    mailbox #(AXI_transaction) gen2scb_mbx;
-    mailbox #(int)             scb2gen_mbx;
+    mailbox #(AXI_transaction)        gen2scb_mbx;
+    mailbox #(int)                    scb2gen_mbx;
 
-    int write_pass_count = 0;
-    int write_fail_count = 0;
+    int                               write_pass_count          = 0;
+    int                               write_fail_count          = 0;
 
-    int read_pass_count  = 0;
-    int read_fail_count  = 0;
+    int                               read_pass_count           = 0;
+    int                               read_fail_count           = 0;
 
     // ==================================================
     // Constructor
@@ -48,7 +48,7 @@ package AXI_scoreboard_pkg;
 
         if (valid_write) begin
           for (int i = 0; i <= expected.AWLEN; i++) begin
-            reference_memory[(expected.AWADDR >> 2) + i] = expected.WDATA[i];
+            reference_memory[(expected.AWADDR>>2)+i] = expected.WDATA[i];
           end
           expected.BRESP = 2'b00;  // OKAY
         end else begin
@@ -66,7 +66,7 @@ package AXI_scoreboard_pkg;
 
         if (valid_read) begin
           for (int i = 0; i <= expected.ARLEN; i++) begin
-            expected.RDATA = reference_memory[(expected.ARADDR >> 2) + i];
+            expected.RDATA = reference_memory[(expected.ARADDR>>2)+i];
           end
           expected.RRESP = 2'b00;  // OKAY
         end else begin
@@ -86,7 +86,7 @@ package AXI_scoreboard_pkg;
       bit araddr_match, arlen_match, rdata_match, rresp_match;
       int WDATA_count;
 
-      forever begin
+      repeat (1007) begin
         // 1. Get transactions
         gen2scb_mbx.get(expected);
         golden_model(expected);
@@ -95,10 +95,10 @@ package AXI_scoreboard_pkg;
         // 2. Write Comparison
         if (expected.AWVALID) begin
           awaddr_match = (expected.AWADDR == actual.AWADDR);
-          awlen_match  = (expected.AWLEN  == actual.AWLEN);
-          bresp_match  = (expected.BRESP  == actual.BRESP);
+          awlen_match  = (expected.AWLEN == actual.AWLEN);
+          bresp_match  = (expected.BRESP == actual.BRESP);
 
-          WDATA_count = 0;
+          WDATA_count  = 0;
           for (int i = 0; i <= expected.AWLEN; i++) begin
             if (expected.WDATA[i] == actual.WDATA[i]) WDATA_count++;
           end
@@ -109,8 +109,9 @@ package AXI_scoreboard_pkg;
                      expected.AWADDR, expected.AWLEN, expected.BRESP);
             write_pass_count++;
           end else begin
-            $display("[%0t] WRITE FAIL: AWADDR = 0x%0h, AWLEN = %0d, Expected BRESP = 0x%0h, Actual BRESP = 0x%0h",
-                     $time, expected.AWADDR, expected.AWLEN, expected.BRESP, actual.BRESP);
+            $display(
+                "[%0t] WRITE FAIL: AWADDR = 0x%0h, AWLEN = %0d, Expected BRESP = 0x%0h, Actual BRESP = 0x%0h",
+                $time, expected.AWADDR, expected.AWLEN, expected.BRESP, actual.BRESP);
             write_fail_count++;
           end
         end
@@ -118,17 +119,18 @@ package AXI_scoreboard_pkg;
         // 3. Read Comparison
         if (expected.ARVALID) begin
           araddr_match = (expected.ARADDR == actual.ARADDR);
-          arlen_match  = (expected.ARLEN  == actual.ARLEN);
-          rresp_match  = (expected.RRESP  == actual.RRESP);
-          rdata_match  = (expected.RDATA  == actual.RDATA);
+          arlen_match  = (expected.ARLEN == actual.ARLEN);
+          rresp_match  = (expected.RRESP == actual.RRESP);
+          rdata_match  = (expected.RDATA == actual.RDATA);
 
           if (araddr_match && arlen_match && rdata_match && rresp_match) begin
             $display("[%0t] READ PASS: ARADDR = 0x%0h, ARLEN = %0d, RRESP = 0x%0h", $time,
                      expected.ARADDR, expected.ARLEN, expected.RRESP);
             read_pass_count++;
           end else begin
-            $display("[%0t] READ FAIL: ARADDR = 0x%0h, ARLEN = %0d, Expected RRESP = 0x%0h, Actual RRESP = 0x%0h",
-                     $time, expected.ARADDR, expected.ARLEN, expected.RRESP, actual.RRESP);
+            $display(
+                "[%0t] READ FAIL: ARADDR = 0x%0h, ARLEN = %0d, Expected RRESP = 0x%0h, Actual RRESP = 0x%0h",
+                $time, expected.ARADDR, expected.ARLEN, expected.RRESP, actual.RRESP);
             read_fail_count++;
           end
         end

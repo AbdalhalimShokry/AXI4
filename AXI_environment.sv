@@ -73,7 +73,7 @@ package AXI_env_pkg;
         drv.run_driver();
         mon.run_monitor();
         scb.run_scoreboard();
-      join_any
+      join
 
       // Generator is done, wait one extra cycle then stop
       @(posedge vif.ACLK);

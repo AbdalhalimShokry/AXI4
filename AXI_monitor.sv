@@ -6,8 +6,8 @@ package AXI_monitor_pkg;
 
     virtual AXI_interface.TB_side vif;
 
-    mailbox #(AXI_transaction) mon2scb_mbx;
-    mailbox #(int)             scb2mon_mbx;
+    mailbox #(AXI_transaction)    mon2scb_mbx;
+    mailbox #(int)                scb2mon_mbx;
 
     task run_monitor();
       AXI_transaction sampled;
@@ -44,7 +44,7 @@ package AXI_monitor_pkg;
               sampled.AWLEN  = vif.AWLEN;
               sampled.AWSIZE = vif.AWSIZE;
 
-              sampled.WDATA = new[sampled.AWLEN + 1];
+              sampled.WDATA  = new[sampled.AWLEN + 1];
 
               for (int i = 0; i <= sampled.AWLEN; i++) begin
                 @(posedge vif.ACLK);
