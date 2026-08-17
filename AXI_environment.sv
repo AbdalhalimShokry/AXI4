@@ -54,13 +54,13 @@ package AXI_env_pkg;
 
       // 5. Wire monitor mailboxes
       mon.mon2scb_mbx = mon2scb_mbx;
-      // mon.scb2mon_mbx = scb2mon_mbx; Don't need any ack from scorevoard to monitor as monitor should be always working with no cuts
+      mon.scb2mon_mbx = scb2mon_mbx;
 
       // 6. Wire scoreboard mailboxes
       scb.gen2scb_mbx = gen2scb_mbx;
       scb.scb2gen_mbx = scb2gen_mbx;
       scb.mon2scb_mbx = mon2scb_mbx;
-      // scb.scb2mon_mbx = scb2mon_mbx; Same as in line 57
+      scb.scb2mon_mbx = scb2mon_mbx;
 
       // 7. Share Virtual Interface
       drv.vif = vif;

@@ -96,13 +96,10 @@ package AXI_scoreboard_pkg;
 
         if (valid_read) begin
 
-          // Allocate space for the complete read burst
-          expected.RDATA = new[expected.ARLEN + 1];
-
           // Read every beat from reference memory
           for (int i = 0; i <= expected.ARLEN; i++) begin
 
-            expected.RDATA[i] = reference_memory[(expected.ARADDR>>2)+i];
+            expected.RDATA = reference_memory[(expected.ARADDR>>2)+i];
 
           end
 
@@ -185,7 +182,7 @@ package AXI_scoreboard_pkg;
           rresp_match  = (expected.RRESP == actual.RRESP);
 
           for (int i = 0; i <= expected.ARLEN; i++) begin
-            if (expected.RDATA[i] == actual.RDATA[i]) RDATA_count++;
+            if (expected.RDATA == actual.RDATA) RDATA_count++;
           end
           rdata_match = (RDATA_count == (expected.ARLEN + 1));
           RDATA_count = 0;

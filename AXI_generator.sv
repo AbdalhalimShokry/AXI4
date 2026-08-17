@@ -82,7 +82,8 @@ package AXI_generator_pkg;
       txn.AWADDR = 16'h0100;
       txn.AWLEN = 8'd3;
       txn.AWSIZE = 3'd2;
-      // txn.WDATA = 32'hAABBCCDD;
+      txn.WDATA = new[txn.AWLEN + 1];
+
       txn.ARADDR = 16'h0100;
       txn.ARLEN = 8'd3;
       txn.ARSIZE = 3'd2;

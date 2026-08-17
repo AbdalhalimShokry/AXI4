@@ -11,6 +11,7 @@ package AXI_monitor_pkg;
 
     // ===== Mailbox ====================================
     mailbox #(AXI_transaction) mon2scb_mbx;
+    mailbox #(AXI_transaction) scb2mon_mbx;
     // ==================================================
 
 
@@ -102,9 +103,6 @@ package AXI_monitor_pkg;
               sampled.ARLEN  = vif.ARLEN;
               sampled.ARSIZE = vif.ARSIZE;
 
-              // Allocate read data array
-              sampled.RDATA  = new[sampled.ARLEN + 1];
-
               // ---------------- Read Data --------------------
               for (int i = 0; i <= sampled.ARLEN; i++) begin
 
@@ -112,7 +110,7 @@ package AXI_monitor_pkg;
                   @(posedge vif.ACLK);
                 end while (!(vif.RVALID && vif.RREADY));
 
-                sampled.RDATA[i] = vif.RDATA;
+                sampled.RDATA = vif.RDATA;
                 sampled.RRESP = vif.RRESP;
 
                 if (vif.RLAST) begin
@@ -132,6 +130,7 @@ package AXI_monitor_pkg;
         // Send complete transaction to scoreboard
         // --------------------------------------------------
         mon2scb_mbx.put(sampled);
+        scb2mon.get(token);
 
       end
 
