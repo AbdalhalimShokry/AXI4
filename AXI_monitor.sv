@@ -4,138 +4,89 @@ package AXI_monitor_pkg;
 
   class AXI_monitor;
 
-    // ===== Virtual Interface ==========================
     virtual AXI_interface.TB_side vif;
-    // ==================================================
 
-
-    // ===== Mailbox ====================================
     mailbox #(AXI_transaction) mon2scb_mbx;
-    mailbox #(AXI_transaction) scb2mon_mbx;
-    // ==================================================
+    mailbox #(int)             scb2mon_mbx;
 
-
-    // ===== Run Monitor ================================
     task run_monitor();
-
       AXI_transaction sampled;
+      int token;
+
+      // Wait until reset is fully released
+      @(posedge vif.ARESETn);
+      @(posedge vif.ACLK);
 
       forever begin
+        // Wait for an active address request
+        while (!(vif.AWVALID || vif.ARVALID)) begin
+          @(posedge vif.ACLK);
+          if (!vif.ARESETn) break;
+        end
+
+        if (!vif.ARESETn) begin
+          @(posedge vif.ARESETn);
+          @(posedge vif.ACLK);
+          continue;
+        end
 
         sampled = new();
-
-        // --------------------------------------------------
-        // Wait until at least one operation is requested
-        // --------------------------------------------------
-        @(posedge vif.ACLK);
-
-        if (!vif.ARESETn) continue;
-
-        do begin
-          @(posedge vif.ACLK);
-        end while (!(vif.AWVALID || vif.ARVALID));
-
         sampled.ARESETn = vif.ARESETn;
-
-        // --------------------------------------------------
-        // Record which operations belong to this transaction
-        // --------------------------------------------------
         sampled.AWVALID = vif.AWVALID;
         sampled.ARVALID = vif.ARVALID;
 
-
         fork
-
-          // ==================================================
           // WRITE OPERATION
-          // ==================================================
           if (sampled.AWVALID) begin
             begin
-
-              // ---------------- Write Address ----------------
-              do begin
-                @(posedge vif.ACLK);
-              end while (!(vif.AWVALID && vif.AWREADY));
-
+              while (!(vif.AWVALID && vif.AWREADY)) @(posedge vif.ACLK);
               sampled.AWADDR = vif.AWADDR;
               sampled.AWLEN  = vif.AWLEN;
               sampled.AWSIZE = vif.AWSIZE;
 
-              // Allocate write data array
-              sampled.WDATA  = new[sampled.AWLEN + 1];
+              sampled.WDATA = new[sampled.AWLEN + 1];
 
-              // ---------------- Write Data -------------------
               for (int i = 0; i <= sampled.AWLEN; i++) begin
-
-                do begin
-                  @(posedge vif.ACLK);
-                end while (!(vif.WVALID && vif.WREADY));
-
+                @(posedge vif.ACLK);
+                while (!(vif.WVALID && vif.WREADY)) @(posedge vif.ACLK);
                 sampled.WDATA[i] = vif.WDATA;
-
                 if (vif.WLAST) break;
-
               end
 
-              // ---------------- Write Response ---------------
-              do begin
-                @(posedge vif.ACLK);
-              end while (!(vif.BVALID && vif.BREADY));
-
+              @(posedge vif.ACLK);
+              while (!(vif.BVALID && vif.BREADY)) @(posedge vif.ACLK);
               sampled.BRESP = vif.BRESP;
-
             end
           end
 
-
-          // ==================================================
           // READ OPERATION
-          // ==================================================
           if (sampled.ARVALID) begin
             begin
-
-              // ---------------- Read Address -----------------
-              do begin
-                @(posedge vif.ACLK);
-              end while (!(vif.ARVALID && vif.ARREADY));
-
+              while (!(vif.ARVALID && vif.ARREADY)) @(posedge vif.ACLK);
               sampled.ARADDR = vif.ARADDR;
               sampled.ARLEN  = vif.ARLEN;
               sampled.ARSIZE = vif.ARSIZE;
 
-              // ---------------- Read Data --------------------
               for (int i = 0; i <= sampled.ARLEN; i++) begin
-
-                do begin
-                  @(posedge vif.ACLK);
-                end while (!(vif.RVALID && vif.RREADY));
-
+                @(posedge vif.ACLK);
+                while (!(vif.RVALID && vif.RREADY)) @(posedge vif.ACLK);
                 sampled.RDATA = vif.RDATA;
                 sampled.RRESP = vif.RRESP;
-
                 if (vif.RLAST) begin
                   sampled.RLAST = vif.RLAST;
                   break;
                 end
-
               end
-
             end
           end
-
         join
 
+        sampled.cg_axi_protocol.sample();
 
-        // --------------------------------------------------
-        // Send complete transaction to scoreboard
-        // --------------------------------------------------
         mon2scb_mbx.put(sampled);
-        scb2mon.get(token);
-
+        scb2mon_mbx.get(token);
       end
-
     endtask
 
   endclass
-
 endpackage

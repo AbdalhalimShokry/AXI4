@@ -63,6 +63,7 @@ package AXI_env_pkg;
       scb.scb2mon_mbx = scb2mon_mbx;
 
       // 7. Share Virtual Interface
+      gen.vif = vif;
       drv.vif = vif;
       mon.vif = vif;
 
