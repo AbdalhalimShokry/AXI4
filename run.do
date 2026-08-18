@@ -1,20 +1,32 @@
-quit -sim
-vdel -all -lib work
+# Create fresh library
 vlib work
 
 transcript file simulation.log
 
-vlog +cover=bcesft -covercells -f files.txt
+# Compile design and testbench
+vlog +cover=bcesft -covercells \
+    axi4.v \
+    axi_memory.v \
+    AXI_interface.sv \
+    AXI_transaction.sv \
+    AXI_generator.sv \
+    AXI_driver.sv \
+    AXI_monitor.sv \
+    AXI_scoreboard.sv \
+    AXI_environment.sv \
+    AXI_assertions.sv \
+    AXI_top.sv
 
-vsim -voptargs="+acc" -coverage work.AXI_top
+# Load simulation
+vsim -voptargs="+acc" -coverage -cvgperinstance work.AXI_top
 
-add wave -r /*
+# Run simulation to completion
 run -all
 
-coverage save AXI_coverage.ucdb
+# Save database and export reports
+coverage save coverage_report.ucdb
+coverage report -detail -cvg -file functional_coverage.txt
+coverage report -detail -code bcesft -file design_code_coverage.txt
+coverage report -detail -file full_coverage_report.txt
 
-coverage report -detail -cvg -output functional_coverage.txt
-
-coverage report -detail -code bcesft -output design_code_coverage.txt
-
-coverage report -detail -output full_coverage_report.txt
+quit -f

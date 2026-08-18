@@ -5,24 +5,29 @@ package AXI_scoreboard_pkg;
   class AXI_scoreboard;
 
     // ==================================================
+    // Configuration
+    // ==================================================
+    int unsigned num_transactions = 1000;
+
+    // ==================================================
     // Reference Memory
     // ==================================================
-    logic                      [31:0] reference_memory[0:1023];
+    logic [31:0] reference_memory[0:1023];
 
     // ==================================================
     // Mailboxes
     // ==================================================
-    mailbox #(AXI_transaction)        mon2scb_mbx;
-    mailbox #(int)                    scb2mon_mbx;
+    mailbox #(AXI_transaction) mon2scb_mbx;
+    mailbox #(int)             scb2mon_mbx;
 
-    mailbox #(AXI_transaction)        gen2scb_mbx;
-    mailbox #(int)                    scb2gen_mbx;
+    mailbox #(AXI_transaction) gen2scb_mbx;
+    mailbox #(int)             scb2gen_mbx;
 
-    int                               write_pass_count          = 0;
-    int                               write_fail_count          = 0;
+    int write_pass_count = 0;
+    int write_fail_count = 0;
 
-    int                               read_pass_count           = 0;
-    int                               read_fail_count           = 0;
+    int read_pass_count  = 0;
+    int read_fail_count  = 0;
 
     // ==================================================
     // Constructor
@@ -86,7 +91,8 @@ package AXI_scoreboard_pkg;
       bit araddr_match, arlen_match, rdata_match, rresp_match;
       int WDATA_count;
 
-      repeat (1007) begin
+      // Total iterations = randomized transactions + 7 directed cases
+      repeat (num_transactions + 7) begin
         // 1. Get transactions
         gen2scb_mbx.get(expected);
         golden_model(expected);
@@ -139,6 +145,12 @@ package AXI_scoreboard_pkg;
         scb2mon_mbx.put(1);
         scb2gen_mbx.put(1);
       end
+
+      $display("\n================ SCOREBOARD REPORT ================");
+      $display("Total Transactions Checked : %0d", (num_transactions + 7));
+      $display("Write Passes : %0d | Write Fails : %0d", write_pass_count, write_fail_count);
+      $display("Read Passes  : %0d | Read Fails  : %0d", read_pass_count, read_fail_count);
+      $display("===================================================\n");
     endtask
 
   endclass

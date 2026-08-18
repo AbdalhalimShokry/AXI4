@@ -11,14 +11,14 @@ package AXI_generator_pkg;
     mailbox #(AXI_transaction)    gen2scb_mbx;
     mailbox #(int)                scb2gen_mbx;
 
-    int unsigned                  num_transactions = 1000;
+    int unsigned                  num_transactions = 999999;
 
     task send_txn(AXI_transaction txn, string tag);
       int token;
       txn.display_transaction(tag);
+      gen2scb_mbx.put(txn);
       gen2drv_mbx.put(txn);
       drv2gen_mbx.get(token);
-      gen2scb_mbx.put(txn);
       scb2gen_mbx.get(token);
     endtask
 

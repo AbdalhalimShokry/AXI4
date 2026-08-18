@@ -42,6 +42,9 @@ package AXI_env_pkg;
       mon = new();
       scb = new();
 
+      // Pass transaction count dynamically
+      scb.num_transactions = gen.num_transactions;
+
       // 3. Wire generator mailboxes
       gen.gen2drv_mbx = gen2drv_mbx;
       gen.drv2gen_mbx = drv2gen_mbx;
@@ -73,7 +76,9 @@ package AXI_env_pkg;
         drv.run_driver();
         mon.run_monitor();
         scb.run_scoreboard();
-      join
+      join_any
+
+      disable fork;
 
       // Generator is done, wait one extra cycle then stop
       @(posedge vif.ACLK);
