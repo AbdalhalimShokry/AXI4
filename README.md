@@ -113,7 +113,7 @@ This repository contains a SystemVerilog testbench and a simple AXI4 DUT (axi4) 
 
 
 
-## Assertions and coverage
+## Assertions
 
 
 
@@ -125,7 +125,9 @@ This repository contains a SystemVerilog testbench and a simple AXI4 DUT (axi4) 
 
 - Both assertions and equivalent cover properties exist in the file
 
-- Coverage:
+## Coverage
+
+
 
 - AXI_monitor contains covergroup cg_axi_protocol with coverpoints for AWADDR, ARADDR, AWLEN, ARLEN, write/read boundary expressions, and response transitions. Cross coverage included with ignore_bins for out-of-range addresses.
 
