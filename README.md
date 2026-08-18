@@ -93,7 +93,7 @@ This repository contains a SystemVerilog testbench and a simple AXI4 DUT (axi4) 
 
 - Directed tests (names in code): DIR_LOWER_BOUND_WR, DIR_LOWER_BOUND_RD, DIR_UPPER_BOUND_WR, DIR_UPPER_BOUND_RD, DIR_4KB_EXACT_WR, DIR_OUT_OF_BOUNDS_WR, DIR_OUT_OF_BOUNDS_RD, DIR_ILLEGAL_CROSS_WR, DIR_WRITE_CHECK, DIR_READ_CHECK
 
-- Then a randomized phase (num_transactions default 10000, randomized transaction fields subject to constraints)
+- Then a randomized phase (num_transactions default 10000 -Can be changed using num_transaction variable-, randomized transaction fields subject to constraints)
 
 - Communicates via mailboxes (gen2drv_mbx, gen2scb_mbx) and waits for tokens from driver/scoreboard
 
