@@ -1,132 +1,71 @@
 module AXI_assertions (
-    AXI_interface intrf
+    input logic        ACLK,
+    input logic        ARESETn,
+    input logic [15:0] AWADDR,
+    input logic [ 7:0] AWLEN,
+    input logic [ 2:0] AWSIZE,
+    input logic        AWVALID,
+    input logic        AWREADY,
+    input logic [31:0] WDATA,
+    input logic        WVALID,
+    input logic        WLAST,
+    input logic        WREADY,
+    input logic [ 1:0] BRESP,
+    input logic        BVALID,
+    input logic        BREADY,
+    input logic [15:0] ARADDR,
+    input logic [ 7:0] ARLEN,
+    input logic [ 2:0] ARSIZE,
+    input logic        ARVALID,
+    input logic        ARREADY,
+    input logic [31:0] RDATA,
+    input logic [ 1:0] RRESP,
+    input logic        RVALID,
+    input logic        RLAST,
+    input logic        RREADY
 );
 
-  // 1. Write Address Channel
-  // AWVALID and control signals must remain stable until AWREADY is asserted
+  // 1. Stability Assertions
   property p_awvalid_stable;
-    @(posedge intrf.ACLK) disable iff (!intrf.ARESETn) (intrf.AWVALID && !intrf.AWREADY) |=> (intrf.AWVALID && $stable(
-        intrf.AWADDR
-    ) && $stable(
-        intrf.AWLEN
-    ) && $stable(
-        intrf.AWSIZE
-    ));
+    @(posedge ACLK) disable iff (!ARESETn)
+    AWVALID && !AWREADY |=> AWVALID && $stable(AWADDR) && $stable(AWLEN) && $stable(AWSIZE);
   endproperty
+  assert_awvalid_stable: assert property (p_awvalid_stable);
+  cover_awvalid_stable:  cover  property (p_awvalid_stable);
 
-  assert_awvalid_stable :
-  assert property (p_awvalid_stable)
-  else $error("Protocol Violation: AWVALID or AW address/control changed before AWREADY!");
-
-
-  // 2. Write Data Channel
-  // WVALID and data signals must remain stable until WREADY is asserted
   property p_wvalid_stable;
-    @(posedge intrf.ACLK) disable iff (!intrf.ARESETn) (intrf.WVALID && !intrf.WREADY) |=> (intrf.WVALID && $stable(
-        intrf.WDATA
-    ) && $stable(
-        intrf.WLAST
-    ));
+    @(posedge ACLK) disable iff (!ARESETn)
+    WVALID && !WREADY |=> WVALID && $stable(WDATA) && $stable(WLAST);
   endproperty
+  assert_wvalid_stable: assert property (p_wvalid_stable);
+  cover_wvalid_stable:  cover  property (p_wvalid_stable);
 
-  assert_wvalid_stable :
-  assert property (p_wvalid_stable)
-  else $error("Protocol Violation: WVALID or write data changed before WREADY!");
-
-
-  // 3. Write Response Channel
-  // BVALID and response signal must remain stable until BREADY is asserted
   property p_bvalid_stable;
-    @(posedge intrf.ACLK) disable iff (!intrf.ARESETn) (intrf.BVALID && !intrf.BREADY) |=> (intrf.BVALID && $stable(
-        intrf.BRESP
-    ));
+    @(posedge ACLK) disable iff (!ARESETn)
+    BVALID && !BREADY |=> BVALID && $stable(BRESP);
   endproperty
+  assert_bvalid_stable: assert property (p_bvalid_stable);
+  cover_bvalid_stable:  cover  property (p_bvalid_stable);
 
-  assert_bvalid_stable :
-  assert property (p_bvalid_stable)
-  else $error("Protocol Violation: BVALID or BRESP changed before BREADY!");
-
-
-  // ARVALID and control signals must remain stable until ARREADY is asserted
   property p_arvalid_stable;
-    @(posedge intrf.ACLK) disable iff (!intrf.ARESETn) (intrf.ARVALID && !intrf.ARREADY) |=> (intrf.ARVALID && $stable(
-        intrf.ARADDR
-    ) && $stable(
-        intrf.ARLEN
-    ) && $stable(
-        intrf.ARSIZE
-    ));
+    @(posedge ACLK) disable iff (!ARESETn)
+    ARVALID && !ARREADY |=> ARVALID && $stable(ARADDR) && $stable(ARLEN) && $stable(ARSIZE);
   endproperty
+  assert_arvalid_stable: assert property (p_arvalid_stable);
+  cover_arvalid_stable:  cover  property (p_arvalid_stable);
 
-  assert_arvalid_stable :
-  assert property (p_arvalid_stable)
-  else $error("Protocol Violation: ARVALID or AR address/control changed before ARREADY!");
-
-
-  // RVALID and data/control signals must remain stable until RREADY is asserted
   property p_rvalid_stable;
-    @(posedge intrf.ACLK) disable iff (!intrf.ARESETn) (intrf.RVALID && !intrf.RREADY) |=> (intrf.RVALID && $stable(
-        intrf.RDATA
-    ) && $stable(
-        intrf.RRESP
-    ) && $stable(
-        intrf.RLAST
-    ));
+    @(posedge ACLK) disable iff (!ARESETn)
+    RVALID && !RREADY |=> RVALID && $stable(RDATA) && $stable(RRESP) && $stable(RLAST);
   endproperty
+  assert_rvalid_stable: assert property (p_rvalid_stable);
+  cover_rvalid_stable:  cover  property (p_rvalid_stable);
 
-  assert_rvalid_stable :
-  assert property (p_rvalid_stable)
-  else $error("Protocol Violation: RVALID or read data changed before RREADY!");
-
-
-  // 1. Write Address Channel
-  property p_awvalid_no_x;
-    @(posedge intrf.ACLK) disable iff (!intrf.ARESETn) intrf.AWVALID |-> !$isunknown(
-        {intrf.AWADDR, intrf.AWLEN, intrf.AWSIZE}
-    );
-  endproperty
-  assert_awvalid_no_x :
-  assert property (p_awvalid_no_x)
-  else $error("X/Z state on Write Address channel payload!");
-
-  // 2. Write Data Channel
-  property p_wvalid_no_x;
-    @(posedge intrf.ACLK) disable iff (!intrf.ARESETn) intrf.WVALID |-> !$isunknown(
-        {intrf.WDATA, intrf.WLAST}
-    );
-  endproperty
-  assert_wvalid_no_x :
-  assert property (p_wvalid_no_x)
-  else $error("X/Z state on Write Data channel payload!");
-
-  // 3. Write Response Channel
-  property p_bvalid_no_x;
-    @(posedge intrf.ACLK) disable iff (!intrf.ARESETn) intrf.BVALID |-> !$isunknown(
-        {intrf.BRESP}
-    );
-  endproperty
-  assert_bvalid_no_x :
-  assert property (p_bvalid_no_x)
-  else $error("X/Z state on Write Response channel payload!");
-
-  // 4. Read Address Channel
-  property p_arvalid_no_x;
-    @(posedge intrf.ACLK) disable iff (!intrf.ARESETn) intrf.ARVALID |-> !$isunknown(
-        {intrf.ARADDR, intrf.ARLEN, intrf.ARSIZE}
-    );
-  endproperty
-  assert_arvalid_no_x :
-  assert property (p_arvalid_no_x)
-  else $error("X/Z state on Read Address channel payload!");
-
-  // 5. Read Data Channel
-  property p_rvalid_no_x;
-    @(posedge intrf.ACLK) disable iff (!intrf.ARESETn) intrf.RVALID |-> !$isunknown(
-        {intrf.RDATA, intrf.RRESP, intrf.RLAST}
-    );
-  endproperty
-  assert_rvalid_no_x :
-  assert property (p_rvalid_no_x)
-  else $error("X/Z state on Read Data channel payload!");
+  // 2. Known-Value (No-X) Checks
+  assert_awvalid_no_x: assert property (@(posedge ACLK) disable iff (!ARESETn) AWVALID |-> !$isunknown({AWADDR, AWLEN, AWSIZE}));
+  assert_wvalid_no_x:  assert property (@(posedge ACLK) disable iff (!ARESETn) WVALID  |-> !$isunknown({WDATA, WLAST}));
+  assert_bvalid_no_x:  assert property (@(posedge ACLK) disable iff (!ARESETn) BVALID  |-> !$isunknown(BRESP));
+  assert_arvalid_no_x: assert property (@(posedge ACLK) disable iff (!ARESETn) ARVALID |-> !$isunknown({ARADDR, ARLEN, ARSIZE}));
+  assert_rvalid_no_x:  assert property (@(posedge ACLK) disable iff (!ARESETn) RVALID  |-> !$isunknown({RDATA, RRESP, RLAST}));
 
 endmodule

@@ -1,0 +1,79 @@
+Coverage Report by instance with details
+
+=================================================================================
+=== Instance: /AXI_top/assertion
+=== Design Unit: work.AXI_assertions
+=================================================================================
+
+Assertion Coverage:
+    Assertions                      10         7         3    70.00%
+--------------------------------------------------------------------------------------------------------------------------------
+Name                 File(Line)                   Failure      Pass     Vacuous    Disable    Attempt     Active Peak Active ATV
+                                                  Count        Count    Count      Count      Count       Count  Count          
+--------------------------------------------------------------------------------------------------------------------------------
+/AXI_top/assertion/assert_awvalid_stable
+                     AXI_assertions.sv(33)              0          0    1986190          4    1986194          0           0 off
+/AXI_top/assertion/assert_wvalid_stable
+                     AXI_assertions.sv(40)              0      10078    1976112          4    1986194          0           2 off
+/AXI_top/assertion/assert_bvalid_stable
+                     AXI_assertions.sv(47)              0      15117    1971073          4    1986194          0           2 off
+/AXI_top/assertion/assert_arvalid_stable
+                     AXI_assertions.sv(54)              0          0    1986190          4    1986194          0           0 off
+/AXI_top/assertion/assert_rvalid_stable
+                     AXI_assertions.sv(61)           4352      10561    1971277          4    1986194          0           2 off
+/AXI_top/assertion/assert_awvalid_no_x
+                     AXI_assertions.sv(65)              0       5039    1981151          4    1986194          0           1 off
+/AXI_top/assertion/assert_wvalid_no_x
+                     AXI_assertions.sv(66)              0     651592    1334598          4    1986194          0           1 off
+/AXI_top/assertion/assert_bvalid_no_x
+                     AXI_assertions.sv(67)              0      20156    1966034          4    1986194          0           1 off
+/AXI_top/assertion/assert_arvalid_no_x
+                     AXI_assertions.sv(68)              0       4971    1981219          4    1986194          0           1 off
+/AXI_top/assertion/assert_rvalid_no_x
+                     AXI_assertions.sv(69)              0     654700    1331490          4    1986194          0           1 off
+
+=================================================================================
+=== Instance: /AXI_generator_pkg
+=== Design Unit: work.AXI_generator_pkg
+=================================================================================
+
+Assertion Coverage:
+    Assertions                       1         1         0   100.00%
+--------------------------------------------------------------------------------------------------------------------------------
+Name                 File(Line)                   Failure      Pass     Vacuous    Disable    Attempt     Active Peak Active ATV
+                                                  Count        Count    Count      Count      Count       Count  Count          
+--------------------------------------------------------------------------------------------------------------------------------
+/AXI_generator_pkg/AXI_generator/run_generator/#ublk#90596039#104/immed__106
+                     AXI_generator.sv(106)              0      10000          0          0      10000          0           0 off
+
+
+ASSERTION RESULTS:
+--------------------------------------------------------------------------------------------------------------------------------
+Name                 File(Line)                   Failure      Pass     Vacuous    Disable    Attempt     Active Peak Active ATV
+                                                  Count        Count    Count      Count      Count       Count  Count          
+--------------------------------------------------------------------------------------------------------------------------------
+/AXI_top/assertion/assert_awvalid_stable
+                     AXI_assertions.sv(33)              0          0    1986190          4    1986194          0           0 off
+/AXI_top/assertion/assert_wvalid_stable
+                     AXI_assertions.sv(40)              0      10078    1976112          4    1986194          0           2 off
+/AXI_top/assertion/assert_bvalid_stable
+                     AXI_assertions.sv(47)              0      15117    1971073          4    1986194          0           2 off
+/AXI_top/assertion/assert_arvalid_stable
+                     AXI_assertions.sv(54)              0          0    1986190          4    1986194          0           0 off
+/AXI_top/assertion/assert_rvalid_stable
+                     AXI_assertions.sv(61)           4352      10561    1971277          4    1986194          0           2 off
+/AXI_top/assertion/assert_awvalid_no_x
+                     AXI_assertions.sv(65)              0       5039    1981151          4    1986194          0           1 off
+/AXI_top/assertion/assert_wvalid_no_x
+                     AXI_assertions.sv(66)              0     651592    1334598          4    1986194          0           1 off
+/AXI_top/assertion/assert_bvalid_no_x
+                     AXI_assertions.sv(67)              0      20156    1966034          4    1986194          0           1 off
+/AXI_top/assertion/assert_arvalid_no_x
+                     AXI_assertions.sv(68)              0       4971    1981219          4    1986194          0           1 off
+/AXI_top/assertion/assert_rvalid_no_x
+                     AXI_assertions.sv(69)              0     654700    1331490          4    1986194          0           1 off
+/AXI_generator_pkg/AXI_generator/run_generator/#ublk#90596039#104/immed__106
+                     AXI_generator.sv(106)              0      10000          0          0      10000          0           0 off
+
+Total Coverage By Instance (filtered view): 72.72%
+

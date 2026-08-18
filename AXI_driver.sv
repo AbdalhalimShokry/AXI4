@@ -11,7 +11,6 @@ package AXI_driver_pkg;
     task run_driver();
       AXI_transaction txn;
 
-      // 1. Initialize bus signals to idle
       vif.AWVALID <= 1'b0;
       vif.AWADDR  <= '0;
       vif.AWLEN   <= '0;
@@ -26,7 +25,6 @@ package AXI_driver_pkg;
       vif.ARSIZE  <= '0;
       vif.RREADY  <= 1'b0;
 
-      // 2. Wait for reset release
       @(posedge vif.ARESETn);
       repeat (2) @(posedge vif.ACLK);
 
@@ -34,13 +32,11 @@ package AXI_driver_pkg;
         gen2drv_mbx.get(txn);
 
         fork
-          // ==================================================
-          // WRITE CHANNELS
-          // ==================================================
+          // ================= WRITE =================
           if (txn.AWVALID) begin
             begin
               fork
-                // 1. Write Address Channel
+                // Write Address
                 begin
                   @(negedge vif.ACLK);
                   vif.AWADDR  <= txn.AWADDR;
@@ -56,7 +52,7 @@ package AXI_driver_pkg;
                   vif.AWVALID <= 1'b0;
                 end
 
-                // 2. Write Data Channel
+                // Write Data
                 begin
                   for (int i = 0; i <= txn.AWLEN; i++) begin
                     @(negedge vif.ACLK);
@@ -75,25 +71,23 @@ package AXI_driver_pkg;
                 end
               join_none
 
-              // 3. Write Response Channel
+              // Backpressure on BREADY to test BVALID stability property
+              @(posedge vif.ACLK);
+              while (!vif.BVALID) @(posedge vif.ACLK);
+              repeat (2) @(posedge vif.ACLK); // Hold BREADY low while BVALID is high!
+
               @(negedge vif.ACLK);
               vif.BREADY <= 1'b1;
-
-              do begin
-                @(posedge vif.ACLK);
-              end while (!vif.BVALID);
-
+              @(posedge vif.ACLK);
               @(negedge vif.ACLK);
               vif.BREADY <= 1'b0;
             end
           end
 
-          // ==================================================
-          // READ CHANNELS
-          // ==================================================
+          // ================= READ =================
           if (txn.ARVALID) begin
             begin
-              // 1. Read Address Channel
+              // Read Address
               @(negedge vif.ACLK);
               vif.ARADDR  <= txn.ARADDR;
               vif.ARLEN   <= txn.ARLEN;
@@ -107,18 +101,20 @@ package AXI_driver_pkg;
               @(negedge vif.ACLK);
               vif.ARVALID <= 1'b0;
 
-              // 2. Read Data Channel
-              @(negedge vif.ACLK);
-              vif.RREADY <= 1'b1;
+              // Backpressure on RREADY to test RVALID stability property
+              @(posedge vif.ACLK);
+              while (!vif.RVALID) @(posedge vif.ACLK);
+              repeat (2) @(posedge vif.ACLK); // Hold RREADY low while RVALID is high!
 
               for (int i = 0; i <= txn.ARLEN; i++) begin
+                @(negedge vif.ACLK);
+                vif.RREADY <= 1'b1;
                 do begin
                   @(posedge vif.ACLK);
                 end while (!vif.RVALID);
+                @(negedge vif.ACLK);
+                vif.RREADY <= 1'b0;
               end
-
-              @(negedge vif.ACLK);
-              vif.RREADY <= 1'b0;
             end
           end
         join
