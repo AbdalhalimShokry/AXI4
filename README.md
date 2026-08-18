@@ -313,4 +313,4 @@ Notes:
 
 - Repository owner: AbdalhalimShokry <abdalhalimshokry@gmail.com>
 
-- Repository partner: ElHanash <mina.elhanash@gmail.com>
+- Repository partner: Mina ElHanash <mina.elhanash@gmail.com>
