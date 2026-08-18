@@ -181,7 +181,7 @@ Quick run (Windows):
 
 - run.bat will clean the work folder and call vsim with the run.do script.
 
-- It assumes Questa is installed at: C:\questasim64_2021.1\win64\vsim.exe (edit run.bat if your installation differs).
+- It assumes Questa is installed at: C:\questasim64_2021.1\win64\vsim.exe.
 
 3. run.do (what it does):
 
@@ -233,7 +233,6 @@ Notes:
 
 
 
-- Edit run.bat to point to your QuestaSim executable if different.
 
 - run.bat kills vsim/vlog/vopt/vish processes before/after run to avoid stale processes.
 
@@ -272,8 +271,6 @@ Notes:
 
 - AXI4_Memory_SV_Project.pdf
 
-- AXI_transaction.sv
-
 - run.do
 
 - run.bat
@@ -302,29 +299,8 @@ Notes:
 ## Contributors
 
 
+# Repository: AbdalhalimShokry/AXI4
 
-- Repository owner: AbdalhalimShokry (repository: AbdalhalimShokry/AXI4)
+- Repository owner: AbdalhalimShokry <abdalhalimshokry@gmail.com>
 
-- For a complete contributor list and commit history, run:
-
-git log --pretty=format:"%an <%ae>" | sort | uniq
-
-
-
-## License and citation
-
-
-
-- No explicit license file present in the repository root. If this matters, add a LICENSE file.
-
-
-
-## Notes and limitations (no invention)
-
-
-
-- The testbench constrains AWSIZE/ARSIZE to 3'd2 (4B beats) in the transaction class and generator; the DUT and monitor follow the same assumption.
-
-- Address space checks use 4 KB boundaries and a 1024-word reference memory (32-bit words).
-
-- Do not assume features not present in the source files (for example: no AXI-lite, no ID/LOCK/PROT/USER fields, no concurrency beyond single-channel bursts implemented).
+- Repository partner: ElHanash <mina.elhanash@gmail.com>
